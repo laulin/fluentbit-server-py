@@ -1,0 +1,6 @@
+**/__pycache__
+etc/*.key
+etc/*.cert
+build/**
+dist/**
+fluentbit_server_py.egg-info/**
