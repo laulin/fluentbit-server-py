@@ -19,11 +19,11 @@ This library is designed as server for Fluentbit and was not tested on Fluentd (
 import sys
 import logging
 
-from fluentbit_authentication import FluentbitAuthentication
-from fluentbit_transport import FluentbitTransport
-from fluentbit_request_handler import FluentbitRequestHandler
-from fluentbit_server import FluentbitServer
-from fluentbit_ssl import FluentbitSSL
+from fluentbit_server.fluentbit_authentication import FluentbitAuthentication
+from fluentbit_server.fluentbit_transport import FluentbitTransport
+from fluentbit_server.fluentbit_request_handler import FluentbitRequestHandler
+from fluentbit_server.fluentbit_server import FluentbitServer
+from fluentbit_server.fluentbit_ssl import FluentbitSSL
 from functools import partial
 
 authentication_factory = partial(FluentbitAuthentication, shared_key="my_shared_key", server_hostname="server.com")

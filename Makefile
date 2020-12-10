@@ -13,7 +13,7 @@ client_run_ssl : client_build
 	docker run --rm --name fluentclient -v $(shell pwd)/etc:/fluent/etc -e HOSTNAME=$(uname -n) --net host fluentc fluent-bit -c /fluent/etc/client_auth_ssl.conf
 
 unittest:
-	python3 -m unittest discover -s fluentbit-server-py/ -p "*.py"
+	python3 -m unittest discover -s tests/ -p "*.py"
 
 certificate:
 	openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout etc/toto.com.key -out etc/toto.com.cert
