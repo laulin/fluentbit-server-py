@@ -19,13 +19,13 @@ certificate:
 	openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout etc/toto.com.key -out etc/toto.com.cert
 
 server_run_ssl:
-	python3 test/server_auth_ssl.py
+	python3 tests/server_auth_ssl.py
 
 server_run_auth:
-	python3 test/server_auth.py
+	python3 tests/server_auth.py
 
 server_run_basic:
-	python3 test/server_basic.py
+	python3 tests/server_basic.py
 
 build_pip:
 	python3 setup.py sdist
