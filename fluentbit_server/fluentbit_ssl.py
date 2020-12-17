@@ -7,11 +7,10 @@ class FluentbitSSL:
         self._verify = verify
 
     def wrap(self, connection):
-        cert_req = ssl.CERT_REQUIRED if self._verify else ssl.CERT_OPTIONAL
-        output = ssl.wrap_socket(connection,
-            server_side=True,
-            certfile = self._crt_file,
-            keyfile = self._key_file,
-            ssl_version = ssl.PROTOCOL_TLS,
-            cert_reqs = cert_req)
+        context = ssl.SSLContext(ssl.PROTOCOL_TLS)
+        context.verify_mode = ssl.CERT_REQUIRED if self._verify else ssl.CERT_OPTIONAL
+        context.load_cert_chain(self._crt_file, self._key_file)
+
+        output = context.wrap_socket(connection, server_side=True)
+
         return output
