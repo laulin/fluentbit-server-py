@@ -16,7 +16,7 @@ ssl = FluentbitSSL(key_file="etc/toto.com.key", crt_file="etc/toto.com.cert")
 def main():
     logging.basicConfig(level=logging.DEBUG)
 
-    server = FluentbitServer(("localhost", 24000), FluentbitRequestHandler, transport_factory, authentication_factory, ssl)
+    server = FluentbitServer(("0.0.0.0", 24000), FluentbitRequestHandler, transport_factory, authentication_factory, ssl)
 
     try:
         server.serve_forever()
