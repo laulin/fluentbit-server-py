@@ -19,25 +19,29 @@ class FluentbitTransport:
         """
         ok = False
         data = b""
+
         while not ok:
-            data += request.recv(1024)
+            new_block = request.recv(1024)
+            data += new_block
+            
             if len(data) > self._buffer_size:
                 raise BufferError("Message can't be bigger than {} bytes".format(self._buffer_size))
             try:
                 if data[0] == b"{":
                     raise NotImplementedError("JSON Message Mode is not implemented")
                 else:
-                    msgpack.unpackb(data, raw=True)
-                    ok = True
+                    if len(new_block) == 0:
+                        msgpack.unpackb(data, raw=True)
+                        ok = True
             except NotImplementedError as e:
                 raise e
             except:
                 pass
-                
+
         return data
 
     def process(self, message_bin):
-        self._log.debug(message_bin)
+        # self._log.debug(message_bin)
         if message_bin[0] == b'{':
             # message as json, not supported
             raise NotImplementedError("JSON Message Mode is not implemented")
