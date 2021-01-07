@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
  
 setup(name='fluentbit-server-py',
-      version='1.0.4',
+      version='1.0.5',
       url='https://github.com/laulin/fluentbit-server-py',
       license='MIT',
       author='Laurent MOULIN',
