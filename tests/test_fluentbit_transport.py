@@ -23,10 +23,12 @@ class TestFluentbitTransport(unittest.TestCase):
         def callback(event):
             callback.result.append(event)
 
+        message = msgpack.unpackb(message_bin, raw=True)
+
         callback.result = list()
 
         ft = FluentbitTransport(callback)
-        ft.process(message_bin)
+        ft.process(message)
 
         expected = [Event(b'random.0', 1607338098.884014, {b'rand_value': 12619388134949588322}),
                     Event(b'random.0', 1607338096.877777, {b'rand_value': 14315931674231618647}),

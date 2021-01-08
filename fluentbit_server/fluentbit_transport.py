@@ -13,40 +13,52 @@ class FluentbitTransport:
         self._buffer_size = buffer_size
         self._log = logging.getLogger("FluentbitTransport")
 
+
+    def unpack_stream(self, data):
+        # recursive data stream parsing
+        while True:
+            try:
+                result = msgpack.unpackb(data, raw=True)
+                yield result
+                return
+            except msgpack.exceptions.ExtraData as e:
+                unpacked = e.unpacked
+                data = e.extra
+                yield unpacked
+            except ValueError as e:
+                self._log.warning("Drop {} bytes".format(len(data)))
+                return
+
     def collect(self, request):
         """
         merge network packet to create a parsable message
         """
-        ok = False
-        data = b""
 
-        while not ok:
-            new_block = request.recv(1024)
+        data = b""
+        request.settimeout(0.5)
+        while True:
+
+            try:
+                new_block = request.recv(1024)
+            except: 
+                new_block = b""
             data += new_block
             
             if len(data) > self._buffer_size:
                 raise BufferError("Message can't be bigger than {} bytes".format(self._buffer_size))
-            try:
-                if data[0] == b"{":
-                    raise NotImplementedError("JSON Message Mode is not implemented")
-                else:
-                    if len(new_block) == 0:
-                        msgpack.unpackb(data, raw=True)
-                        ok = True
-            except NotImplementedError as e:
-                raise e
-            except:
-                pass
 
-        return data
+            if data[0] == b"{":
+                raise NotImplementedError("JSON Message Mode is not implemented")
+            else:
+                if len(new_block) == 0:
+                    for message in self.unpack_stream(data):
+                        yield message
+                    return
 
-    def process(self, message_bin):
-        # self._log.debug(message_bin)
-        if message_bin[0] == b'{':
-            # message as json, not supported
-            raise NotImplementedError("JSON Message Mode is not implemented")
+        return
 
-        message = msgpack.unpackb(message_bin, raw=True)
+    def process(self, message):
+
         output = []
         if isinstance(message[1], int):
             # Message mode

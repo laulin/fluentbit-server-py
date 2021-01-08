@@ -18,6 +18,12 @@ unittest:
 certificate:
 	openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout etc/toto.com.key -out etc/toto.com.cert
 
+server_build :
+	docker build -t test_server -f dockerfile_server .
+
+server_run : server_build
+	docker run -it --rm -m 1024M  -v $(shell pwd)/etc:/root/etc/ -v $(shell pwd)/tests:/root/tests/ -v $(shell pwd)/fluentbit_server:/root/fluentbit_server/ --net host test_server python3 tests/server_auth_ssl.py
+
 server_run_ssl:
 	python3 tests/server_auth_ssl.py
 
