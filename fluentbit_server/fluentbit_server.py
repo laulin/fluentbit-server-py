@@ -44,5 +44,11 @@ class FluentbitServer(socketserver.TCPServer):
 
         return True
 
+    def shutdown_request(self, request):
+        try:
+            socketserver.TCPServer.shutdown_request(self, request)
+        except Exception as e:
+            self._log.error("Failed to shutdown socket ({})".format(repr(e)))
+
     def get_authentication(self): return self._authentication
     def get_transport(self): return self._transport
