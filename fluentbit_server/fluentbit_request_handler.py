@@ -16,8 +16,12 @@ class FluentbitRequestHandler(socketserver.BaseRequestHandler):
     def handle(self):
         self._log.debug("handle")
         if self.server.get_authentication():
-            auth = self.server.get_authentication()()
-            authorized = auth.process_authentication(self.request)
+            try:
+                auth = self.server.get_authentication()()
+                authorized = auth.process_authentication(self.request)
+            except Exception as e:
+                self._log.error("Authentication failed ({})".format(repr(e)))
+                return
         else:
             authorized = True
 
@@ -29,7 +33,7 @@ class FluentbitRequestHandler(socketserver.BaseRequestHandler):
             except Exception as e:
                 self._log.error("Drop message ({})".format(repr(e)))
         else:
-            self._log.debug("Authentication failed")
+            self._log.debug("Authentication failed (refused)")
 
     def finish(self):
         self._log.debug("finish")
